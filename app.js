@@ -72,9 +72,64 @@ function GameController(
         console.log(`${getActivePlayer().name}'s turn.`);
     }
 
+    const alertWinner = () => {
+        setTimeout(() => {
+            alert('Winner!');
+        },0)
+    }
+
     const playRound = (row, column) => {
         console.log(`Placing ${getActivePlayer().name}'s move into ${row},${column}....`);
+
+    
         board.makeMove(row, column, getActivePlayer().token);
+
+        const boardState = board.getBoard();
+        const token = getActivePlayer().token;
+        // console.log(boardState)
+        // console.log(boardState[0][0].getValue())
+        console.log(boardState[0][0],boardState[1][1],boardState[2][2])
+
+        if(row == column || (row == 0 && column == 2) || (row == 2 && column == 0)) {
+            if(boardState[0][0].getValue() == token && boardState[1][1].getValue() == token && boardState[2][2].getValue() == token) {
+                alertWinner();
+            }
+            else if(boardState[0][2].getValue() == token && boardState[1][1].getValue() == token && boardState[2][0].getValue() == token) {
+                alertWinner();
+            }
+        }
+
+        if(row == 0) {
+            if(boardState[0][0].getValue() == token && boardState[0][1].getValue() == token && boardState[0][2].getValue() == token) {
+                alertWinner();
+            }
+        }
+        if(row == 1) {
+            if(boardState[1][0].getValue() == token && boardState[1][1].getValue() == token && boardState[1][2].getValue() == token) {
+                alertWinner();
+            }
+        }
+        if(row == 2) {
+            if(boardState[2][0].getValue() == token && boardState[2][1].getValue() == token && boardState[2][2].getValue() == token) {
+                alertWinner();
+            }
+        }
+
+        if(column == 0) {
+            if(boardState[0][0].getValue() == token && boardState[1][0].getValue() == token && boardState[2][0].getValue() == token) {
+                alertWinner();
+            }
+        }
+        if(column == 1) {
+            if(boardState[0][1].getValue() == token && boardState[1][1].getValue() == token && boardState[2][1].getValue() == token) {
+                alertWinner();
+            }
+        }
+        if(column == 2) {
+            if(boardState[0][2].getValue() == token && boardState[1][2].getValue() == token && boardState[2][2].getValue() == token) {
+                alertWinner();
+            }
+        }
 
         switchPlayerTurn();
         printNewRound();
