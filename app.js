@@ -13,7 +13,7 @@ function GameBoard() {
     const getBoard = () => board;
 
     const makeMove = (row, column, player) => {
-        const isValid = board[row][column].getValue() == 0;
+        const isValid = board[row][column].getValue() == '';
 
         if(!isValid) {
             return;
@@ -32,7 +32,7 @@ function GameBoard() {
 }
 
 function Cell() {
-    let value = 0;
+    let value = '';
 
     const addMove = (player) => {
         value = player;
@@ -75,20 +75,15 @@ function GameController(
     const alertWinner = () => {
         setTimeout(() => {
             alert('Winner!');
-        },0)
+        },100)
     }
 
     const playRound = (row, column) => {
         console.log(`Placing ${getActivePlayer().name}'s move into ${row},${column}....`);
-
-    
         board.makeMove(row, column, getActivePlayer().token);
 
         const boardState = board.getBoard();
         const token = getActivePlayer().token;
-        // console.log(boardState)
-        // console.log(boardState[0][0].getValue())
-        console.log(boardState[0][0],boardState[1][1],boardState[2][2])
 
         if(row == column || (row == 0 && column == 2) || (row == 2 && column == 0)) {
             if(boardState[0][0].getValue() == token && boardState[1][1].getValue() == token && boardState[2][2].getValue() == token) {
@@ -169,14 +164,13 @@ function ScreenController() {
     function clickHandlerBoard(e) {
         const selectedColumn = e.target.dataset.column;
         const selectedRow = e.target.dataset.row;
+        const currentValue = e.target.textContent;
 
-        if(!selectedColumn) return;
-
+        if(!selectedColumn || currentValue != '') return;
         game.playRound(selectedRow, selectedColumn);
         updateScreen();
     }
     boardDiv.addEventListener('click', clickHandlerBoard);
-
     updateScreen();
 }
 
