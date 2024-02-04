@@ -48,6 +48,16 @@ function GameController(
     playerTwoName = 'Player Two'
 ) {
     const board = GameBoard();
+    let moves = 0;
+    let winner = 'none';
+
+    const getMoves = () => {
+        return moves;
+    }
+
+    const increaseMoves = () => {
+        moves++;
+    }
 
     const players = [
         {
@@ -72,58 +82,66 @@ function GameController(
         console.log(`${getActivePlayer().name}'s turn.`);
     }
 
-    const alertWinner = () => {
-        setTimeout(() => {
-            alert('Winner!');
-        },100)
+    const getWinner = () => {
+        return winner;
+    }
+
+    const setWinner = () => {
+        winner = getActivePlayer().name;
     }
 
     const playRound = (row, column) => {
         console.log(`Placing ${getActivePlayer().name}'s move into ${row},${column}....`);
         board.makeMove(row, column, getActivePlayer().token);
+        increaseMoves();
 
         const boardState = board.getBoard();
         const token = getActivePlayer().token;
 
         if(row == column || (row == 0 && column == 2) || (row == 2 && column == 0)) {
             if(boardState[0][0].getValue() == token && boardState[1][1].getValue() == token && boardState[2][2].getValue() == token) {
-                alertWinner();
+                setWinner();
             }
             else if(boardState[0][2].getValue() == token && boardState[1][1].getValue() == token && boardState[2][0].getValue() == token) {
-                alertWinner();
+                setWinner();
             }
         }
 
         if(row == 0) {
             if(boardState[0][0].getValue() == token && boardState[0][1].getValue() == token && boardState[0][2].getValue() == token) {
-                alertWinner();
+                setWinner();
             }
         }
         if(row == 1) {
             if(boardState[1][0].getValue() == token && boardState[1][1].getValue() == token && boardState[1][2].getValue() == token) {
-                alertWinner();
+                setWinner();
             }
         }
         if(row == 2) {
             if(boardState[2][0].getValue() == token && boardState[2][1].getValue() == token && boardState[2][2].getValue() == token) {
-                alertWinner();
+                setWinner();
             }
         }
 
         if(column == 0) {
             if(boardState[0][0].getValue() == token && boardState[1][0].getValue() == token && boardState[2][0].getValue() == token) {
-                alertWinner();
+                setWinner();
             }
         }
         if(column == 1) {
             if(boardState[0][1].getValue() == token && boardState[1][1].getValue() == token && boardState[2][1].getValue() == token) {
-                alertWinner();
+                setWinner();
             }
         }
         if(column == 2) {
             if(boardState[0][2].getValue() == token && boardState[1][2].getValue() == token && boardState[2][2].getValue() == token) {
-                alertWinner();
+                setWinner();
             }
+        }
+
+        console.log(moves)
+        if(moves == 9 && winner == 'none') {
+            winner = 'draw';
         }
 
         switchPlayerTurn();
@@ -132,13 +150,14 @@ function GameController(
 
     printNewRound();
 
-    return {playRound, getActivePlayer, getBoard: board.getBoard};
+    return {playRound, getActivePlayer, getBoard: board.getBoard, getMoves, increaseMoves, getWinner};
 }
 
 function ScreenController() {
     const game = GameController();
     const playerTurnDiv = document.querySelector('.turn');
     const boardDiv = document.querySelector('.board');
+    const winnerDisplay = document.querySelector('.result');
 
     const updateScreen = () => {
         boardDiv.textContent = '';
@@ -147,6 +166,13 @@ function ScreenController() {
         const activePlayer = game.getActivePlayer();
 
         playerTurnDiv.textContent = `${activePlayer.name}'s turn...`;
+
+        if(game.getWinner() != 'none' && game.getWinner() != 'draw') {
+            winnerDisplay.textContent = `${game.getWinner()} wins!`;
+        }
+        else if(game.getWinner() == 'draw') {
+            winnerDisplay.textContent = `It's a ${game.getWinner()}!`
+        }
 
         board.forEach((row, indexRow) => {
             row.forEach((cell, indexColumn) => {
@@ -165,10 +191,13 @@ function ScreenController() {
         const selectedColumn = e.target.dataset.column;
         const selectedRow = e.target.dataset.row;
         const currentValue = e.target.textContent;
+        const movesMade = game.getMoves();
 
         if(!selectedColumn || currentValue != '') return;
-        game.playRound(selectedRow, selectedColumn);
-        updateScreen();
+        if(game.getWinner() == 'none') {
+            game.playRound(selectedRow, selectedColumn);
+            updateScreen();
+        }
     }
     boardDiv.addEventListener('click', clickHandlerBoard);
     updateScreen();
