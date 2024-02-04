@@ -154,10 +154,18 @@ function GameController(
 }
 
 function ScreenController() {
-    const game = GameController();
     const playerTurnDiv = document.querySelector('.turn');
     const boardDiv = document.querySelector('.board');
     const winnerDisplay = document.querySelector('.result');
+
+    const getPlayerNames = () => {
+        let playerOneName = prompt('Enter Player One\'s Name:');
+        let playerTwoName = prompt('Enter Player Two\'s Name:');
+        return GameController(playerOneName, playerTwoName);
+    }
+
+    const game = getPlayerNames();
+    
 
     const updateScreen = () => {
         boardDiv.textContent = '';
